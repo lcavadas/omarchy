@@ -324,6 +324,11 @@ assert(
     && defaultById['remove.browser.zen'].when === 'omarchy-pkg-present zen-browser-bin',
   'menu still hides Remove rows for software that is not installed'
 )
+assert(
+  defaultById['install.ai.dictation'].action.includes('omarchy-install-dictation-voxtype')
+    && defaultById['remove.ai.dictation'].action.includes('omarchy-remove-dictation-voxtype'),
+  'menu uses the current dictation installer and remover commands'
+)
 assertDeepEqual(
   defaultItems
     .filter(item => item.parent === 'remove')
