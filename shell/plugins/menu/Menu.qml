@@ -931,7 +931,13 @@ Item {
     dmenuChangeKey = String(payload.changeKey || JSON.stringify(dmenuOnChange))
     var requested = MenuModel.dmenuSelections(dmenuOptions, Array.isArray(payload.selected) ? payload.selected : [], dmenuOnChange.length > 0)
     var confirmed = dmenuConfirmedSelections[dmenuChangeKey]
-    dmenuSaved = Array.isArray(confirmed) ? MenuModel.dmenuSelections(dmenuOptions, confirmed, true) : requested
+    var pending = selectionProc.hasPending(dmenuChangeKey)
+    dmenuSaved = pending && Array.isArray(confirmed) ? MenuModel.dmenuSelections(dmenuOptions, confirmed, true) : requested
+    if (!pending) {
+      var refreshed = Object.assign({}, dmenuConfirmedSelections)
+      refreshed[dmenuChangeKey] = requested
+      dmenuConfirmedSelections = refreshed
+    }
     dmenuSelected = dmenuSaved
     if (dmenuOnChange.length > 0)
       dmenuSelected = MenuModel.dmenuSelections(dmenuOptions, selectionProc.requestedSelection(dmenuChangeKey), true)
@@ -1019,6 +1025,11 @@ Item {
     property var options: []
     property var queue: []
     property string collected: ""
+
+    function hasPending(changeKey) {
+      if (running && this.changeKey === changeKey) return true
+      return queue.some(function(change) { return change.key === changeKey })
+    }
 
     function requestedSelection(changeKey) {
       for (var i = queue.length - 1; i >= 0; i--) {

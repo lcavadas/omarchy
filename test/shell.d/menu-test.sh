@@ -732,8 +732,10 @@ assert(
     && /selectionProc\.requestedSelection\(dmenuChangeKey\)/.test(menuQml)
     && /function startNext\(\) \{\s*if \(queue\.length === 0\) return/.test(menuQml)
     && /confirmed\[changeKey\] = applied/.test(menuQml)
+    && /function hasPending\(changeKey\)/.test(menuQml)
+    && /var pending = selectionProc\.hasPending\(dmenuChangeKey\)[\s\S]*dmenuSaved = pending && Array\.isArray\(confirmed\)/.test(menuQml)
     && !/function cancelRequest\(/.test(menuQml),
-  'multi-select saves survive menu requests and remain scoped to their setting key'
+  'multi-select saves survive menu requests and refresh from new values once settled'
 )
 assert(
   /confirmed\[changeKey\] = applied[\s\S]*root\.dmenuConfirmedSelections = confirmed/.test(menuQml)
